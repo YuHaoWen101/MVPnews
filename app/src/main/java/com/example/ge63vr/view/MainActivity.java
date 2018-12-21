@@ -71,17 +71,8 @@ public class MainActivity extends AppCompatActivity implements MVPContrat.View {
             this.data = data;
         }
     }
-
-    @Override
-    public void ToLoadMore() {
-    }
-
     public void clearData(){
         data = null;
 }
 
-    @Override
-    public void callPresenterToRefresh() {
-
-    }
 }

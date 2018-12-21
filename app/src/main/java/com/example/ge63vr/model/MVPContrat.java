@@ -14,8 +14,6 @@ public interface MVPContrat {
 
         void onUpdate(Data data);
 
-        void ToLoadMore();
-        void callPresenterToRefresh();
     }
 
     interface ModelInterface {
