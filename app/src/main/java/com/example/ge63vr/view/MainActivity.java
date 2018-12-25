@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements MVPContrat.View {
             linearLayoutManager = new LinearLayoutManager(this);
             swipeRefreshLayout.setOnRefreshListener(() -> {
                 presenter.refresh();
-                Toast.makeText(this,"刷新成功",Toast.LENGTH_SHORT);
+                Toast.makeText(this,"刷新成功",Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
             });
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
