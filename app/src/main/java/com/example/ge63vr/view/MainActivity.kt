@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.example.ge63vr.R
 import com.example.ge63vr.model.Data
 import com.example.ge63vr.model.MVPContrat
+import com.example.ge63vr.model.StoriesBean
 import com.example.ge63vr.presenter.Presenter
 import com.example.ge63vr.presenter.RecyclerviewAdapter
 import java.util.ArrayList
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), MVPContrat.View {
                 //加载更多数据
                 Toast.makeText(this@MainActivity, "上拉加载中", Toast.LENGTH_SHORT).show()
                 presenter.loadMore(data?.date)
-                recyclerAdapter?.addMoreStories(data!!.stories as ArrayList<Data.StoriesBean>, data!!.date)
+                recyclerAdapter?.addMoreStories(data!!.stories as ArrayList<StoriesBean>, data!!.date)
             }
         })
         recyclerView?.layoutManager = linearLayoutManager

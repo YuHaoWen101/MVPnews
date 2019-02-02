@@ -15,28 +15,30 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.ge63vr.R
 import com.example.ge63vr.model.Data
+import com.example.ge63vr.model.StoriesBean
+import com.example.ge63vr.model.TopStoriesBean
 import com.example.ge63vr.view.StoryDetailActivity
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class RecyclerviewAdapter(private val context: Context, private val mData: Data) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val mStoriesBean: ArrayList<Data.StoriesBean>
-    private val mTopStoriesBean: ArrayList<Data.TopStoriesBean>
+    private val mStoriesBean: ArrayList<StoriesBean>
+    private val mTopStoriesBean: ArrayList<TopStoriesBean>
     private var topViewHolder: TopViewHolder? = null
     private var textViewHolder: TextViewHolder? = null
     private var dateTextViewHolder: DateTextViewHolder? = null
     private var currentItem = 0
     private var views: MutableList<View>? = null
+    private var more: ArrayList<StoriesBean>? = null
     private val handler = Handler()
-    private var more: ArrayList<Data.StoriesBean>? = null
     private val positions = ArrayList<Int>()
     private val TOP_ITEM = 0
     private val DATE_ITEM = 1
     private val NORMAL_ITEM = 2
     private val dateMap = HashMap<Int, String?>()
 
-    fun addMoreStories(beforeStories: ArrayList<Data.StoriesBean>, datebefore: String?) {
+    fun addMoreStories(beforeStories: ArrayList<StoriesBean>, datebefore: String?) {
         more = beforeStories
         positions.add(mStoriesBean.size + 1)
         dateMap[mStoriesBean.size + 1] = datebefore
@@ -47,8 +49,8 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
     init {
         dateMap[1] = "今日新闻"
         positions.add(1)
-        mStoriesBean = mData.stories as ArrayList<Data.StoriesBean>
-        mTopStoriesBean = mData.top_stories as ArrayList<Data.TopStoriesBean>
+        mStoriesBean = mData.stories as ArrayList<StoriesBean>
+        mTopStoriesBean = mData.top_stories as ArrayList<TopStoriesBean>
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -82,7 +84,7 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
                 intent.putExtra("id", mStoriesBean[position - 1].id)
                 context.startActivity(intent)
             }
-            Glide.with(context).load(storiesBean.images?.get(0)).into(textViewHolder!!.imageView)
+            Glide.with(context).load(storiesBean.images.get(0)).into(textViewHolder!!.imageView)
         }
 
         if (viewHolder is TopViewHolder) {
@@ -108,7 +110,7 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
                 context.startActivity(intent)
             }
             dateTextViewHolder!!.textView.text = storiesBean.title
-            Glide.with(context).load(storiesBean.images!![0]).into(dateTextViewHolder!!.imageView)
+            Glide.with(context).load(storiesBean.images[0]).into(dateTextViewHolder!!.imageView)
         }
     }
 
