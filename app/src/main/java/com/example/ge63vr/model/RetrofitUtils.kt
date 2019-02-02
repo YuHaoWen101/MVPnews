@@ -33,20 +33,7 @@ class RetrofitUtils private constructor() {
     }
 
     companion object {
-
-        private var retrofitUtils: RetrofitUtils? = null
-
-
-        val instance: RetrofitUtils?
-            get() {
-                if (retrofitUtils == null) {
-                    synchronized(RetrofitUtils::class.java) {
-                        if (retrofitUtils == null) {
-                            retrofitUtils = RetrofitUtils()
-                        }
-                    }
-                }
-                return retrofitUtils
-            }
+        val instance: RetrofitUtils by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+            RetrofitUtils() }
     }
 }
