@@ -15,30 +15,30 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.ge63vr.R
 import com.example.ge63vr.model.Data
-import com.example.ge63vr.model.StoriesBean
-import com.example.ge63vr.model.TopStoriesBean
+import com.example.ge63vr.model.Story
+import com.example.ge63vr.model.TopStory
 import com.example.ge63vr.view.StoryDetailActivity
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class RecyclerviewAdapter(private val context: Context, private val mData: Data) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val mStoriesBean: ArrayList<StoriesBean>
-    private val mTopStoriesBean: ArrayList<TopStoriesBean>
-    private var topViewHolder: TopViewHolder? = null
-    private var textViewHolder: TextViewHolder? = null
-    private var dateTextViewHolder: DateTextViewHolder? = null
+    private val mStoriesBean: ArrayList<Story>
+    private val mTopStoriesBean: ArrayList<TopStory>
+    private lateinit var topViewHolder: TopViewHolder
+    private lateinit var textViewHolder: TextViewHolder
+    private lateinit var dateTextViewHolder: DateTextViewHolder
     private var currentItem = 0
-    private var views: MutableList<View>? = null
-    private var more: ArrayList<StoriesBean>? = null
+    private lateinit var views: MutableList<View>
     private val handler = Handler()
+    private lateinit var more: ArrayList<Story>
     private val positions = ArrayList<Int>()
     private val TOP_ITEM = 0
     private val DATE_ITEM = 1
     private val NORMAL_ITEM = 2
     private val dateMap = HashMap<Int, String?>()
 
-    fun addMoreStories(beforeStories: ArrayList<StoriesBean>, datebefore: String?) {
+    fun addMoreStories(beforeStories: ArrayList<Story>, datebefore: String?) {
         more = beforeStories
         positions.add(mStoriesBean.size + 1)
         dateMap[mStoriesBean.size + 1] = datebefore
@@ -49,8 +49,8 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
     init {
         dateMap[1] = "今日新闻"
         positions.add(1)
-        mStoriesBean = mData.stories as ArrayList<StoriesBean>
-        mTopStoriesBean = mData.top_stories as ArrayList<TopStoriesBean>
+        mStoriesBean = mData.stories as ArrayList<Story>
+        mTopStoriesBean = mData.top_stories as ArrayList<TopStory>
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -78,22 +78,22 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
         if (viewHolder is TextViewHolder) {
             val storiesBean = mStoriesBean[viewHolder.getAdapterPosition() - 1]
             textViewHolder = viewHolder
-            textViewHolder!!.textView.text = storiesBean.title
-            textViewHolder!!.itemView.setOnClickListener { v ->
+            textViewHolder.textView.text = storiesBean.title
+            textViewHolder.itemView.setOnClickListener {
                 val intent = Intent(context, StoryDetailActivity::class.java)
                 intent.putExtra("id", mStoriesBean[position - 1].id)
                 context.startActivity(intent)
             }
-            Glide.with(context).load(storiesBean.images.get(0)).into(textViewHolder!!.imageView)
+            Glide.with(context).load(storiesBean.images.get(0)).into(textViewHolder.imageView)
         }
 
         if (viewHolder is TopViewHolder) {
-            val topStoriesBean = mTopStoriesBean[viewHolder.getAdapterPosition()]
             topViewHolder = viewHolder
-            topViewHolder!!.textview_Viewpager.text = topStoriesBean.title
+            val topStoriesBean = mTopStoriesBean[viewHolder.getAdapterPosition()]
+            topViewHolder.textview_Viewpager.text = topStoriesBean.title
             val adapter = viewpagerecommendAdapter(context)
-            topViewHolder!!.myViewPager.adapter = adapter
-            topViewHolder!!.myViewPager.setOnPageChangeListener(viewpagerRecommendPageChangeListener())
+            topViewHolder.myViewPager.adapter = adapter
+            topViewHolder.myViewPager.setOnPageChangeListener(viewpagerRecommendPageChangeListener())
             val scheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
             scheduledExecutorService.scheduleAtFixedRate(DotRun(), 3, 6,
                     TimeUnit.SECONDS)
@@ -101,16 +101,15 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
         if (viewHolder is DateTextViewHolder) {
             val storiesBean = mStoriesBean[viewHolder.getAdapterPosition() - 1]
             dateTextViewHolder = viewHolder
-            if (more != null) {
-                dateTextViewHolder!!.dateView.text = turnSringToDate(Objects.requireNonNull<String>(dateMap[viewHolder.getAdapterPosition()]))
-            }
-            dateTextViewHolder!!.itemView.setOnClickListener { v ->
+                dateTextViewHolder.dateView.text = turnSringToDate(Objects.requireNonNull<String>(dateMap[viewHolder.getAdapterPosition()]))
+
+            dateTextViewHolder.itemView.setOnClickListener { v ->
                 val intent = Intent(context, StoryDetailActivity::class.java)
                 intent.putExtra("id", mStoriesBean[position - 1].id)
                 context.startActivity(intent)
             }
-            dateTextViewHolder!!.textView.text = storiesBean.title
-            Glide.with(context).load(storiesBean.images[0]).into(dateTextViewHolder!!.imageView)
+            dateTextViewHolder.textView.text = storiesBean.title
+            Glide.with(context).load(storiesBean.images[0]).into(dateTextViewHolder.imageView)
         }
     }
 
@@ -150,11 +149,11 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
             textview_tuijian_tou5 = itemView.findViewById(R.id.textview_tuijian_tou5)
             //初始化原点
             views = ArrayList()
-            views!!.add(textview_tuijian_tou1)
-            views!!.add(textview_tuijian_tou2)
-            views!!.add(textview_tuijian_tou3)
-            views!!.add(textview_tuijian_tou4)
-            views!!.add(textview_tuijian_tou5)
+            views.add(textview_tuijian_tou1)
+            views.add(textview_tuijian_tou2)
+            views.add(textview_tuijian_tou3)
+            views.add(textview_tuijian_tou4)
+            views.add(textview_tuijian_tou5)
         }
     }
 
@@ -235,8 +234,8 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
 
         override fun onPageSelected(position: Int) {
             currentItem = position
-            topViewHolder!!.textview_Viewpager.text = mTopStoriesBean[position].title
-            views!![elderposition].setBackgroundResource(R.drawable.dot_normal)
+            topViewHolder.textview_Viewpager.text = mTopStoriesBean[position].title
+            views[elderposition].setBackgroundResource(R.drawable.dot_normal)
             views!![position].setBackgroundResource(R.drawable.dot_focused)
             elderposition = position
         }
@@ -248,7 +247,7 @@ class RecyclerviewAdapter(private val context: Context, private val mData: Data)
 
     private inner class DotRun : Runnable {
         override fun run() {
-            synchronized(topViewHolder!!.myViewPager) {
+            synchronized(topViewHolder.myViewPager) {
                 currentItem = (currentItem + 1) % 5
                 // handler切换图片
                 handler.obtainMessage().sendToTarget()
